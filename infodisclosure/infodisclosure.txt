@@ -1,0 +1,26 @@
+1. Briefly explain the potential vulnerabilities in **insecure.ts**
+
+The insecure.ts file has a serious NoSQL injection vulnerability because it directly 
+uses user input in a MongoDB query without sanitization. Since MongoDB allows flexible 
+query structures, an attacker can manipulate the query by passing specially crafted inputs 
+like username[$ne]=, which can bypass authentication checks and potentially expose user data. 
+Additionally, the application lacks proper error handling, meaning an attacker could send malformed queries
+ to crash the server. There is also no rate limiting in place, making it possible for an attacker to
+  flood the server with requests, leading to info disclosure and confidential issues.
+
+2. Briefly explain how a malicious attacker can exploit them.
+
+A malicious attacker can exploit these vulnerabilities by injecting a NoSQL query object that modifies 
+how the database query is interpreted. For example, using ?username[$ne]= tricks MongoDB into returning 
+the first user in the database, effectively bypassing authentication. An attacker could also attempt 
+more advanced queries to extract sensitive information or modify user data. Furthermore, by sending multiple 
+requests in quick succession, an attacker could overload the database, degrading performance or causing a crash.
+
+3. Briefly explain the defensive techniques used in **secure.ts** to prevent the information disclosure vulnerability?
+
+The secure.ts file introduces several security measures to mitigate these vulnerabilities. 
+First, it validates user input by ensuring that username is a string, preventing structured query injection. 
+It also sanitizes input by removing non-alphanumeric characters, which helps prevent malicious query modifications. 
+Additionally, it wraps database queries in a try-catch block to handle errors gracefully, preventing unexpected crashes. 
+Although this improves security, additional measures such as using parameterized queries, 
+rate limiting, and authentication tokens would further enhance the application’s resilience against attacks.

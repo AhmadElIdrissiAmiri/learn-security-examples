@@ -1,0 +1,25 @@
+1. Briefly explain the potential vulnerabilities in **insecure.ts**
+
+The insecure.ts file has a major vulnerability due to improper authentication and authorization checks. 
+It allows a user to update roles based solely on the provided userId, which means any user can pass 
+an arbitrary userId and escalate their privileges to an admin role. 
+Additionally, there is no session or token-based authentication,
+ making it easy for attackers to manipulate requests and change user roles without verification.
+
+
+2. Briefly explain how a malicious attacker can exploit them.
+
+A malicious attacker can exploit this vulnerability by sending a POST request 
+to /update-role with any userId and a new role, effectively escalating their privileges.
+ Since there is no authentication mechanism ensuring that the request is made by an admin, an attacker 
+can simply guess or enumerate valid userIds and change their own role to admin, gaining full control over the system.
+
+
+3. Briefly explain the defensive techniques used in **secure.ts** to prevent the privilege escalation vulnerability?
+
+The secure.ts file mitigates this vulnerability by implementing session-based authentication, 
+requiring users to be logged in before making changes. Instead of relying on userId in the request body,
+ it checks req.session.userId to ensure that the action is being performed by an authenticated user. 
+ Additionally, it verifies that the logged-in user is an admin before allowing role modifications, 
+ preventing unauthorized privilege escalation. The use of session middleware enhances security 
+ by maintaining authentication state, ensuring that only authorized users can make critical changes.

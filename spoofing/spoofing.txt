@@ -1,0 +1,39 @@
+1. Briefly explain the spoofing vulnerability in **insecure.ts**.
+
+The insecure.ts server is vulnerable to spoofing in two main ways:
+	1.	Cookie theft (Session Hijacking): Since the session cookie (connect.sid) 
+    is not marked as httpOnly, a malicious script running in the browser can easily 
+    access the cookie via document.cookie. This opens the door for attackers to steal session 
+    cookies and impersonate the legitimate user by sending the stolen cookies with subsequent requests, 
+    which could allow unauthorized access to sensitive endpoints.
+	2.	Cross-Site Request Forgery (CSRF): The insecure server does not employ any protection mechanisms 
+    (like tokens) to prevent unauthorized requests from being made on behalf of the user.
+     An attacker can craft a malicious site that sends POST requests to the /sensitive endpoint
+    on behalf of an authenticated user, potentially executing sensitive operations without their consent.
+
+2. Briefly explain different ways in which vulnerability can be exploited.
+
+The vulnerability can be exploited in the following ways:
+	•	Cookie Theft: An attacker can inject JavaScript into a malicious website 
+    or page that is visited by a user. This script can read the connect.sid 
+    session cookie and send it to an attacker-controlled server,
+     enabling the attacker to impersonate the user and gain unauthorized access.
+	•	Cross-Site Request Forgery (CSRF): If the user is logged into insecure.ts 
+    and visits a malicious website that makes unauthorized requests to the insecure.ts server
+     (e.g., submitting a POST request to /sensitive), the server would trust the request because 
+     it contains the user’s session cookie (connect.sid), which automatically gets sent with the request. 
+     This would allow the attacker to trigger sensitive operations like granting themselves access to supersecret.
+
+
+3. Briefly explain why **secure.ts** does not have the spoofing vulnerability in **insecure.ts**.    
+
+
+The secure.ts implements key security measures that mitigate the spoofing vulnerabilities:
+	1.	httpOnly Cookies: The session cookie in secure.ts is marked with the httpOnly flag (true),
+     meaning it cannot be accessed via JavaScript (document.cookie). 
+     This makes it much harder for an attacker to steal the session cookie through script injection or malicious websites.
+	2.	sameSite Cookies: The sameSite attribute of the session cookie is set to true, 
+    which helps prevent Cross-Site Request Forgery (CSRF) attacks. This setting ensures 
+    that the session cookie is only sent in requests originating from the same site, 
+    and not from third-party websites. This prevents an attacker from exploiting the user’s 
+    authenticated session to make unauthorized requests.

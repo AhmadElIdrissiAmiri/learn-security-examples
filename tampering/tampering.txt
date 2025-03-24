@@ -1,0 +1,38 @@
+1. Briefly explain the potential vulnerabilities in **insecure.ts**
+
+The insecure.ts file is vulnerable to script injection, which is a form of tampering. 
+In this case, the form field for the user’s name does not properly sanitize the input before displaying 
+it back on the page. This creates an opportunity for an attacker to inject JavaScript code,
+which will be executed when the page is rendered. This type of attack is often referred to as Cross-Site Scripting (XSS). 
+If the user enters a script tag like the following:
+<script> document.body.innerHTML = "<a href='https://google.com'> Gotcha </a>"</script>
+It would be executed when rendered, and a malicious link could be displayed, 
+potentially directing the user to a harmful site or manipulating the content of the page.
+In this case we are simply redirecting the user to google.com but it could potentially be a malicious
+link or sites. 
+
+
+2. Briefly explain how a malicious attacker can exploit them.
+
+A malicious attacker can exploit this vulnerability by injecting JavaScript code into the form 
+input field, such as a script that manipulates the DOM or sends malicious requests to external resources. 
+For example, an attacker could inject a script to steal session cookies, manipulate page content,
+or redirect users to a phishing website. By inputting a script in the “name” field of the form,
+the attacker can execute arbitrary code when other users view the page, effectively taking control 
+over parts of the page and potentially compromising the security of the users.
+
+3. Briefly explain why **secure.ts** does not have the same vulnerabilties?
+
+The secure.ts file mitigates the script injection vulnerability by properly 
+sanitizing and escaping any user input before rendering it to the page. 
+This ensures that potentially harmful scripts cannot be executed. 
+By using express-session for session management and handling 
+form inputs securely, the application prevents script injection
+from affecting the page or server. 
+The form submissions in secure.ts are also handled more securely, 
+and any user-supplied data, such as the “name” field, would be escaped 
+or sanitized properly before being displayed back in the browser.
+This ensures that even if an attacker tries to inject malicious JavaScript,
+it will be treated as plain text and not executed by the browser.
+So the escapeHTML() function will replace all the HTML characters and escape them 
+this way we prevent the XSS attacks.

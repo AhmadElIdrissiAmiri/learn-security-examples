@@ -1,2 +1,30 @@
-- Briefly explain the vulnerability and why the secure version is better at preventing repudiation than the insecure version.
-- What additional security mechanisms can you incorporate to prevent such attacks?
+1. Briefly explain the vulnerability.
+
+In the insecure.ts version, the vulnerability stems from the lack of proper logging, 
+authentication, and user verification. A malicious user can send requests to perform actions 
+(such as sending a message or retrieving messages) without any clear trace or accountability. 
+This makes it possible for users to deny their actions (repudiation), as there is no system in place to 
+link actions to a specific user or track requests. Without logging, it is impossible to determine
+ who performed what actions, making it easy for malicious users to repudiate their behavior.
+
+2. Briefly explain why the vulnerability is addressed in __secure.ts__.
+
+In the secure.ts version, the vulnerability is mitigated through proper request 
+logging and user authentication mechanisms. The server writes detailed logs of all actions, 
+including message sending and retrieving, with timestamps, user information (e.g., IP addresses), 
+and the actual actions taken. By requiring authentication before performing sensitive actions
+ (e.g., sending messages or retrieving them), the system ensures that only authorized users can 
+ interact with the services. This helps prevent repudiation since all actions are logged and 
+ can be traced back to a specific authenticated user.
+
+3. Which design pattern is used in the secure version to address the vulnerability? Briefly explain how it works?
+
+The secure.ts version uses the Observer Pattern and the Chain of Responsibility Pattern. 
+The Observer Pattern is employed via the logging middleware, which “observes” every request and logs it to a file.
+ This allows the system to track every action and ensure traceability, thus addressing the repudiation issue. 
+ The Chain of Responsibility Pattern is used for the middleware functions, where each middleware 
+ component processes the request and either passes it along to the next handler or responds to the client, 
+ depending on the specific logic (e.g., authentication, logging, error handling). 
+ This pattern ensures that each action is handled appropriately, helping prevent unauthorized actions and
+  providing accountability.
+
